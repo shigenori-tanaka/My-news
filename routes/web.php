@@ -19,9 +19,13 @@ Route::group(['prefix' => 'admin'], function() {
     Route::get('news/create', 'Admin\NewsController@add')->middleware('auth');
     // ログインしていない場合のリダイレクト処理に、middlewareを利用
     // 認証済みなら通す。認証未ならログイン画面にリダイレクト
+    Route::post('news/create', 'Admin\NewsController@create');
     Route::get('profile/create', 'Admin\ProfileController@add')->middleware('auth');
     Route::get('profile/edit', 'Admin\ProfileController@edit')->middleware('auth');
+    Route::post('profile/create', 'Admin\ProfileController@create')->middleware('auth');
+    Route::post('profile/edit', 'Admin\ProfileController@update')->middleware('auth');
 });
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
