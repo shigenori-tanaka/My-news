@@ -1,0 +1,27 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::group(['prefix' => 'admin'], function() {
+    Route::get('news/create', 'Admin\NewsController@add')->middleware('auth');
+    // ログインしていない場合のリダイレクト処理に、middlewareを利用
+    // 認証済みなら通す。認証未ならログイン画面にリダイレクト
+    Route::get('profile/create', 'Admin\ProfileController@add')->middleware('auth');
+    Route::get('profile/edit', 'Admin\ProfileController@edit')->middleware('auth');
+});
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
