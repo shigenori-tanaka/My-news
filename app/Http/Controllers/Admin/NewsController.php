@@ -45,12 +45,12 @@ class NewsController extends Controller
       return redirect('admin/news/create');
   }
   
-  public function index(Request $request)
+ public function index(Request $request)
   {
       $cond_title = $request->cond_title;
       if ($cond_title != '') {
-          // 検索されたら検索結果を取得する
-          $posts = News::where('title', $cond_title)->get();
+          // 検索されたら検索結果を取得する。likeで曖昧検索
+          $posts = News::where('title', 'like', '%'.$cond_title.'%')->get();
       } else {
           // それ以外はすべてのニュースを取得する
           $posts = News::all();
@@ -88,7 +88,6 @@ class NewsController extends Controller
         unset($news_form['remove']);
         $news->fill($news_form)->save();
 
-        // 以下を追記
         $history = new History;
         $history->news_id = $news->id;
         $history->edited_at = Carbon::now();
