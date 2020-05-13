@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Profile;
+use App\ProfileHistory;
+
+use Carbon\Carbon;
 
 class ProfileController extends Controller
 {
@@ -35,7 +38,6 @@ class ProfileController extends Controller
 
     public function edit(Request $request)
   {
-      // News Modelからデータを取得する
       $profile = Profile::find($request->id);
       if (empty($profile)) {
         abort(404);    
@@ -51,17 +53,14 @@ class ProfileController extends Controller
       $profile = Profile::find($request->id);
       // 送信されてきたフォームデータを格納する
       $profile_form = $request->all();
-      if (isset($profile_form['image'])) {
-        $path = $request->file('image')->store('public/image');
-        $profile->image_path = basename($path);
-        unset($profile_form['image']);
-      } elseif (isset($request->remove)) {
-        $profile->image_path = null;
-        unset($profile_form['remove']);
-      }
       unset($profile_form['_token']);
       // 該当するデータを上書きして保存する
       $profile->fill($profile_form)->save();
+      
+      $Profile_History = new ProfileHistory;
+      $Profile_History->profile_id = $profile->id;
+      $Profile_History->edited_at = Carbon::now();
+      $Profile_History->save();
 
       return redirect('admin/news');
   }
